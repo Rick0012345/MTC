@@ -23,7 +23,7 @@ class JanelaPrincipal:
         
         btn_medicamentos = ctk.CTkButton(left_frame, text="Medicamentos", width=150, command=self.abrir_janela_medicamentos)
         btn_medicamentos.pack(pady=10)
-
+        # TESTANDO MUDANÇAS
         # Frame direito para o TreeView de Medicamentos
         right_frame = ctk.CTkFrame(main_frame)
         right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
