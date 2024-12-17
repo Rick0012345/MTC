@@ -3,10 +3,10 @@ from tkinter import ttk, messagebox
 from customtkinter import *
 from database import carregar_pacientes_db, carregar_medicamentos_db, adicionar_paciente_db, editar_paciente_db, deletar_paciente_db
 from PIL import Image
+
 class JanelaPrincipal:
 
     def __init__(self):
-        
         self.root = CTk()
         self.root.title("MTC - Controle de Medicamentos")
         self.root.geometry("1250x750")
@@ -65,7 +65,7 @@ class JanelaPrincipal:
             text="Pacientes",
             width=150,
             height=30,
-            command=None,
+            command= self.abrir_janela_pacientes,
             corner_radius=15
         )
         btn_medicamentos = CTkButton(
@@ -81,6 +81,7 @@ class JanelaPrincipal:
         btn_pacientes.grid(row=0, column=0, pady=30)
         btn_medicamentos.grid(row=5, column=0, pady=30)
         
+        
         # Configuração da Treeview
         columns = ("Nome do Medicamento", "Estoque", "Vencimento")
         tree = ttk.Treeview(tree_frame, columns=columns, show="headings", height=15)
@@ -93,5 +94,14 @@ class JanelaPrincipal:
         carregar_pacientes_db(tree=tree)
         
         self.root.mainloop()
+
+    def abrir_janela_pacientes(self):
+            
+        pacientes_janela = CTkToplevel(self.root)
+        pacientes_janela.title("Pacientes")
+        pacientes_janela.geometry("1000x600")
+        pacientes_janela.transient(self.root)
+        pacientes_janela.deiconify()
+        
 
 JanelaPrincipal()
