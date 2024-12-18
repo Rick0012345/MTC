@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import customtkinter as ctk
-from database import carregar_pacientes_db, carregar_medicamentos_db,adicionar_paciente_db, editar_paciente_db, deletar_paciente_db
+from database import carregar_pacientes_db, carregar_medicamentos_db,adicionar_paciente_db, editar_paciente_db, deletar_paciente_db, adicionar_medicamento_db, deletar_medicamento_db
 
 class JanelaPrincipal:
     def __init__(self):
@@ -102,31 +102,87 @@ class JanelaPrincipal:
         medicamentos_janela.deiconify()
 
         # Frame para exibir e manipular os medicamentos
-        frame_medicamentos = ctk.CTkFrame(medicamentos_janela)
-        frame_medicamentos.pack(fill="both", expand=True)
+        self.frame_medicamentos = ctk.CTkFrame(medicamentos_janela)
+        self.frame_medicamentos.pack(fill="both", expand=True)
 
         # Botões para Adicionar, Remover e Editar Medicamentos
-        btn_adicionar_medicamento = ctk.CTkButton(frame_medicamentos, text="Adicionar Medicamento", command=self.adicionar_medicamento)
+        btn_adicionar_medicamento = ctk.CTkButton(self.frame_medicamentos, text="Adicionar Medicamento", command=self.adicionar_medicamento)
         btn_adicionar_medicamento.grid(row=1, column=0, padx=10, pady=10, sticky="w")
-        btn_remover_medicamento = ctk.CTkButton(frame_medicamentos, text="Remover Medicamento", command=self.remover_medicamento)
+        btn_remover_medicamento = ctk.CTkButton(self.frame_medicamentos, text="Remover Medicamento", command=self.remover_medicamento)
         btn_remover_medicamento.grid(row=1, column=1, padx=10, pady=10, sticky="w")
-        btn_editar_medicamento = ctk.CTkButton(frame_medicamentos, text="Editar Medicamento", command=self.editar_medicamento)
+        btn_editar_medicamento = ctk.CTkButton(self.frame_medicamentos, text="Editar Medicamento", command=None)
         btn_editar_medicamento.grid(row=1, column=2, padx=10, pady=10, sticky="w")
 
+        #entradas_para inserção de novo paciente
+        self.inp_nome = ctk.CTkEntry(self.frame_medicamentos, placeholder_text="Nome")
+        self.inp_nome.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+
+        self.inp_estoque = ctk.CTkEntry(self.frame_medicamentos, placeholder_text="Estoque")
+        self.inp_estoque.grid(row=3, column=0, padx=10, pady=10, sticky="ew")
+
+        self.inp_validade = ctk.CTkEntry(self.frame_medicamentos, placeholder_text="Vencimento")
+        self.inp_validade.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
+
         # Configuração do TreeView para os medicamentos
-        columns_medicamentos = ("Nome do Medicamento", "Estoque", "Vencimento")
-        tree_medicamentos = ttk.Treeview(frame_medicamentos, columns=columns_medicamentos, show="headings", height=15)
+        self.columns_medicamentos = ("Nome do Medicamento", "Estoque", "Vencimento")
+        self.tree_medicamentos = ttk.Treeview(self.frame_medicamentos, columns=self.columns_medicamentos, show="headings", height=15)
         
         #carregando os dados atualizados
-        for col in columns_medicamentos:
-            tree_medicamentos.heading(col, text=col)
-            tree_medicamentos.column(col, width=150, anchor=tk.CENTER)
+        for col in self.columns_medicamentos:
+            self.tree_medicamentos.heading(col, text=col)
+            self.tree_medicamentos.column(col, width=150, anchor=tk.CENTER)
 
-        tree_medicamentos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew", columnspan=3)
-        frame_medicamentos.grid_columnconfigure(0, weight=1)
+        self.tree_medicamentos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew", columnspan=3)
+        self.frame_medicamentos.grid_columnconfigure(0, weight=1)
         
         # Carregar medicamentos do banco de dados
-        carregar_medicamentos_db(tree_medicamentos)
+        carregar_medicamentos_db(self.tree_medicamentos)
+
+    def adicionar_medicamento(self):
+        n1 = self.inp_nome.get()
+        n2 = self.inp_estoque.get()
+        n3 = self.inp_validade.get()
+
+        if n1 == "" or n2 == "" or n3 == "":
+            messagebox.showerror("Erro", "Todos os campos devem ser preenchidos")
+            return
+        else:
+            # Limpa o TreeView para evitar duplicações
+            # Funciona em qualquer treeview, apesar do nome.
+            self.limpar_tv_pacientes(self.tree_medicamentos)
+
+            adicionar_medicamento_db(n1, n2, n3)
+            for col in self.columns_medicamentos:
+                self.tree_medicamentos.heading(col, text=col)
+                self.tree_medicamentos.column(col, width=150, anchor=tk.CENTER)
+            
+            self.tree_medicamentos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew", columnspan=3)
+            self.frame_medicamentos.grid_columnconfigure(0, weight=1)
+            
+            
+            carregar_medicamentos_db(self.tree_medicamentos)
+            self.limpar_campos_medicamentos()
+
+    def remover_medicamento(self):
+        selecionado = self.tree_medicamentos.selection()
+        if not selecionado:
+            messagebox.showerror("Erro", "Nenhum medicamento selecionado")
+            return
+        else:
+        # Obter dados do medicamento selecionado
+            medicamento_selecionado = self.tree_medicamentos.item(selecionado[0], "values")
+            nome = medicamento_selecionado[0]
+            # idade = medicamento_selecionado[1]
+            # endereco = medicamento_selecionado[2]
+            
+            # Remover medicamento do banco de dados
+            deletar_medicamento_db(nome)
+
+            # Atualizar a Treeview
+            self.limpar_tv_pacientes(self.tree_medicamentos)
+            carregar_medicamentos_db(self.tree_medicamentos)
+
+            messagebox.showinfo("Sucesso", "Medicamento removido com sucesso!")
 
     # Funções para manipulação (ações fictícias)
     def adicionar_paciente(self):
@@ -153,10 +209,13 @@ class JanelaPrincipal:
             
             carregar_pacientes_db(self.tree_pacientes)
             self.limpar_campos_pacientes()
-            
+
+    def limpar_campos_medicamentos(self):
+        self.inp_nome.delete(0, tk.END)
+        self.inp_estoque.delete(0, tk.END)
+        self.inp_validade.delete(0, tk.END)
 
     def limpar_campos_pacientes(self):
-
         self.inp_nome.delete(0, tk.END)
         self.inp_idade.delete(0, tk.END)
         self.inp_endereco.delete(0, tk.END)

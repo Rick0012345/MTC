@@ -104,5 +104,15 @@ def deletar_paciente_db(CPF):
     except sqlite3.Error as e:
         print(f"Erro ao deletar paciente: {e}")
 
+def deletar_medicamento_db(nome):
+    try:
+        with conectardb() as conn:
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM medicamentos WHERE nome = ?', (nome,))
+            conn.commit()
+            print(f"Medicamento {nome} removido com sucesso!")
+    except sqlite3.Error as e:
+        print(f"Erro ao deletar medicamento: {e}")
+
 # Gerar a base de dados ao inicializar
 gerardb()
