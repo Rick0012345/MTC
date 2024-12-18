@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk, messagebox
 from customtkinter import *
 from database import carregar_pacientes_db, carregar_medicamentos_db, adicionar_paciente_db, editar_paciente_db, deletar_paciente_db
-
+from PIL import Image
 class JanelaPrincipal:
 
     def __init__(self):
@@ -26,17 +26,20 @@ class JanelaPrincipal:
         )
         main_frame.grid(row=1, column=0, padx=20, pady=10, sticky="nsew")
 
+
+
+        imagem = Image.open("mtc_logo.png")  # Insira o caminho correto da imagem
+        ctk_imagem = CTkImage(light_image=imagem, size=(140, 80))
         
         # Frame superior com a imagem
         imgLabel = CTkLabel(
             self.root,
+            text="",
+            image=ctk_imagem,
             anchor="n",
-            fg_color="lightblue",
-            bg_color="lightblue",
-            width=30,
-            height=30
+
         )
-        imgLabel.grid(row=0, column=0, padx=10, pady=10)
+        imgLabel.grid(row=0, column=0, padx=2, pady=2)
 
         # Frames internos
         left_frame = CTkFrame(
