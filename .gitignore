@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+.venv
 env/
 venv/
 ENV/
@@ -16,7 +17,7 @@ venv.bak/
 *.egg-info/
 dist/
 build/
-
+test.py
 # Pytest
 .cache
 .pytest_cache/

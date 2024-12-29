@@ -26,8 +26,6 @@ class JanelaPrincipal:
         )
         main_frame.grid(row=1, column=0, padx=20, pady=10, sticky="nsew")
 
-
-
         imagem = Image.open("mtc_logo.png")  # Insira o caminho correto da imagem
         ctk_imagem = CTkImage(light_image=imagem, size=(140, 80))
         
@@ -38,8 +36,8 @@ class JanelaPrincipal:
             image=ctk_imagem,
             anchor="n",
 
-        )
-        imgLabel.grid(row=0, column=0, padx=2, pady=2)
+        ).grid(row=0, column=0, padx=2, pady=2)
+        
 
         # Frames internos
         left_frame = CTkFrame(
@@ -67,7 +65,7 @@ class JanelaPrincipal:
             height=30,
             command= self.abrir_janela_pacientes,
             corner_radius=15
-        )
+        ).grid(row=0, column=0, pady=30)
         btn_medicamentos = CTkButton(
             left_frame,
             text="Medicamentos",
@@ -75,12 +73,8 @@ class JanelaPrincipal:
             height=30,
             command=None,
             corner_radius=15
-        )
+        ).grid(row=5, column=0, pady=30)
 
-        # Posicionamento dos botões
-        btn_pacientes.grid(row=0, column=0, pady=30)
-        btn_medicamentos.grid(row=5, column=0, pady=30)
-        
         
         # Configuração da Treeview
         columns = ("Nome do Medicamento", "Estoque", "Vencimento")
@@ -103,5 +97,42 @@ class JanelaPrincipal:
         pacientes_janela.transient(self.root)
         pacientes_janela.deiconify()
         
+        # Configurando peso das colunas e linhas
+        pacientes_janela.columnconfigure(0, weight=1)  # Coluna da esquerda
+        pacientes_janela.columnconfigure(1, weight=1)  # Coluna da direita
+        pacientes_janela.rowconfigure(0, weight=1)     # Linha superior
+        pacientes_janela.rowconfigure(1, weight=0)     # Linha inferior
+        #frames
 
+        tv_frame = CTkFrame(
+            pacientes_janela,
+            fg_color="lightblue",
+            corner_radius=10,
+            height=200,
+            width=200
+        ).grid(row=0, column=1, sticky="nsew", pady=10, padx=5)
+
+        inp_frame = CTkFrame(
+            pacientes_janela,
+            fg_color="blue",
+            corner_radius=10,
+            height=200,
+            width=200
+        ).grid(row=0, column=0, sticky="nsew", pady=10, padx=5)
+
+        btn_frame = CTkFrame(
+            pacientes_janela,
+            fg_color="red",
+            corner_radius=10,
+            height=50,
+            
+        ).grid(row=1, column=0, columnspan=2, sticky="nsew", pady=10, padx=10)
+
+
+        # btn_adicionar_paciente = CTkButton(pacientes_janela, text="Adicionar Paciente", command=None)
+        # btn_adicionar_paciente.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        # btn_remover_paciente = CTkButton(pacientes_janela, text="Remover Paciente", command=None)
+        # btn_remover_paciente.grid(row=1, column=1, padx=10, pady=10, sticky="w")
+        # btn_editar_paciente = CTkButton(pacientes_janela, text="Editar Paciente", command=None)
+        # btn_editar_paciente.grid(row=1, column=2, padx=10, pady=10, sticky="w")
 JanelaPrincipal()
