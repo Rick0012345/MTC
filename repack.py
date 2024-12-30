@@ -102,37 +102,99 @@ class JanelaPrincipal:
         pacientes_janela.columnconfigure(1, weight=1)  # Coluna da direita
         pacientes_janela.rowconfigure(0, weight=1)     # Linha superior
         pacientes_janela.rowconfigure(1, weight=0)     # Linha inferior
+        
         #frames
 
-        tv_frame = CTkFrame(
+        tv_frame_pacientes = CTkFrame(
             pacientes_janela,
             fg_color="lightblue",
-            corner_radius=10,
+            
             height=200,
-            width=200
-        ).grid(row=0, column=1, sticky="nsew", pady=10, padx=5)
+            width=300
+        )
+        tv_frame_pacientes.grid(row=0, column=1, sticky="nsew")
 
         inp_frame = CTkFrame(
             pacientes_janela,
-            fg_color="blue",
-            corner_radius=10,
+            fg_color="lightblue",
+            
             height=200,
             width=200
-        ).grid(row=0, column=0, sticky="nsew", pady=10, padx=5)
+        )
+        inp_frame.grid(row=0, column=0, sticky="nsew")
+        inp_frame.columnconfigure(0, weight=1)  # Faz a coluna 0 expandir
 
         btn_frame = CTkFrame(
             pacientes_janela,
-            fg_color="red",
-            corner_radius=10,
-            height=50,
+            fg_color="lightblue",
+            height=70,
             
-        ).grid(row=1, column=0, columnspan=2, sticky="nsew", pady=10, padx=10)
+        )
+        btn_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        
+        btn_frame.columnconfigure(0, weight=1)  
+        btn_frame.columnconfigure(1, weight=0) 
+        btn_frame.columnconfigure(2, weight=0) 
+        btn_frame.columnconfigure(3, weight=0)  
+        btn_frame.columnconfigure(4, weight=1) 
 
+        btn_adicionar_paciente = CTkButton(
+            btn_frame,
+            text="Adicionar Paciente",
+            command=None
+            ).grid(row=0, column=1, padx=20, pady=10, sticky="w")
+        btn_remover_paciente = CTkButton(
+            btn_frame,
+            text="Remover Paciente",
+            command=None
+            ).grid(row=0, column=2, padx=20, pady=10, sticky="w")
+        btn_editar_paciente = CTkButton(
+            btn_frame,
+            text="Editar Paciente",
+            command=None
+            ).grid(row=0, column=3, padx=20, pady=10, sticky="w")
+        
+        inp_nome = CTkEntry(
+            inp_frame,
+            placeholder_text="Nome",
+            placeholder_text_color="black",
+            fg_color="white",
+            border_color="blue"
 
-        # btn_adicionar_paciente = CTkButton(pacientes_janela, text="Adicionar Paciente", command=None)
-        # btn_adicionar_paciente.grid(row=1, column=0, padx=10, pady=10, sticky="w")
-        # btn_remover_paciente = CTkButton(pacientes_janela, text="Remover Paciente", command=None)
-        # btn_remover_paciente.grid(row=1, column=1, padx=10, pady=10, sticky="w")
-        # btn_editar_paciente = CTkButton(pacientes_janela, text="Editar Paciente", command=None)
-        # btn_editar_paciente.grid(row=1, column=2, padx=10, pady=10, sticky="w")
+            ).grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+    
+        inp_idade = CTkEntry(
+            inp_frame,
+            placeholder_text="Idade",
+            placeholder_text_color="black",
+            fg_color="white",
+            border_color="blue"
+            ).grid(row=3, column=0, padx=10, pady=10, sticky="ew")
+        
+        inp_endereco = CTkEntry(
+            inp_frame,
+            placeholder_text="Endereço",
+            placeholder_text_color="black",
+            fg_color="white",
+            border_color="blue"
+            ).grid(row=4, column=0, padx=10, pady=10, sticky="ew")
+
+        inp_contato = CTkEntry(
+            inp_frame,
+            placeholder_text="contato familiar",
+             placeholder_text_color="black",
+            fg_color="white",
+            border_color="blue"
+            ).grid(row=5, column=0, padx=10, pady=10, sticky="ew")
+        
+
+        columns_pacientes = ("Nome", "Idade", "Contato Familiar", "CPF")
+        tree_pacientes = ttk.Treeview(tv_frame_pacientes, columns=columns_pacientes, show="headings", height=15)
+        
+        for col in columns_pacientes:
+            tree_pacientes.heading(col, text=col)
+            tree_pacientes.column(col, width=150, anchor=CENTER)
+
+        tree_pacientes.pack(fill="both", expand=True,padx=10, pady=10)
+        tv_frame_pacientes.grid_columnconfigure(0, weight=1)
 JanelaPrincipal()
