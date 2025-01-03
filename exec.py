@@ -90,7 +90,6 @@ class JanelaPrincipal:
         self.tree_pacientes.grid(row=0, column=0, padx=10, pady=10, sticky="nsew", columnspan=3)
         self.frame_pacientes.grid_columnconfigure(0, weight=1)
         
-        
         carregar_pacientes_db(self.tree_pacientes)
 
     
@@ -197,7 +196,6 @@ class JanelaPrincipal:
         else:
             # Limpa o TreeView para evitar duplicações
             self.limpar_tv_pacientes(self.tree_pacientes)
-
             adicionar_paciente_db(n1, n2, n3, n4)
             for col in self.columns_pacientes:
                 self.tree_pacientes.heading(col, text=col)

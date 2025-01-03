@@ -121,14 +121,14 @@ class JanelaPrincipal:
             height=200,
             width=200
         )
+        
         inp_frame.grid(row=0, column=0, sticky="nsew")
         inp_frame.columnconfigure(0, weight=1)  # Faz a coluna 0 expandir
 
         btn_frame = CTkFrame(
             pacientes_janela,
             fg_color="lightblue",
-            height=70,
-            
+            height=70,   
         )
         btn_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
         
@@ -141,8 +141,9 @@ class JanelaPrincipal:
         btn_adicionar_paciente = CTkButton(
             btn_frame,
             text="Adicionar Paciente",
-            command=None
-            ).grid(row=0, column=1, padx=20, pady=10, sticky="w")
+            command=self.adicionar_paciente,
+            )
+        btn_adicionar_paciente.grid(row=0, column=1, padx=20, pady=10, sticky="w")
         btn_remover_paciente = CTkButton(
             btn_frame,
             text="Remover Paciente",
@@ -154,47 +155,89 @@ class JanelaPrincipal:
             command=None
             ).grid(row=0, column=3, padx=20, pady=10, sticky="w")
         
-        inp_nome = CTkEntry(
+        self.inp_nome = CTkEntry(
             inp_frame,
             placeholder_text="Nome",
-            placeholder_text_color="black",
+            placeholder_text_color="#8c9190",
             fg_color="white",
-            border_color="blue"
-
-            ).grid(row=2, column=0, padx=10, pady=10, sticky="ew")
-    
-        inp_idade = CTkEntry(
+            border_color="blue",
+            text_color="black"
+            )
+        self.inp_nome.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+        
+        self.inp_idade = CTkEntry(
             inp_frame,
             placeholder_text="Idade",
-            placeholder_text_color="black",
+            placeholder_text_color="#8c9190",
             fg_color="white",
-            border_color="blue"
-            ).grid(row=3, column=0, padx=10, pady=10, sticky="ew")
+            border_color="blue",
+            text_color="black"
+
+            )
+        self.inp_idade.grid(row=3, column=0, padx=10, pady=10, sticky="ew")
         
-        inp_endereco = CTkEntry(
+        self.inp_endereco = CTkEntry(
             inp_frame,
             placeholder_text="Endereço",
-            placeholder_text_color="black",
+            placeholder_text_color="#8c9190",
             fg_color="white",
-            border_color="blue"
-            ).grid(row=4, column=0, padx=10, pady=10, sticky="ew")
+            border_color="blue",
+            text_color="black"
+            )
+        self.inp_endereco.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
 
-        inp_contato = CTkEntry(
+        self.inp_contato = CTkEntry(
             inp_frame,
             placeholder_text="contato familiar",
-             placeholder_text_color="black",
+            placeholder_text_color="#8c9190",
             fg_color="white",
-            border_color="blue"
-            ).grid(row=5, column=0, padx=10, pady=10, sticky="ew")
+            border_color="blue",
+            text_color="black"
+            )
+        self.inp_contato.grid(row=5, column=0, padx=10, pady=10, sticky="ew")
         
 
-        columns_pacientes = ("Nome", "Idade", "Contato Familiar", "CPF")
-        tree_pacientes = ttk.Treeview(tv_frame_pacientes, columns=columns_pacientes, show="headings", height=15)
+        self.columns_pacientes = ("Nome", "Idade", "Contato Familiar", "CPF")
+        self.tree_pacientes = ttk.Treeview(tv_frame_pacientes, columns=self.columns_pacientes, show="headings", height=15)
         
-        for col in columns_pacientes:
-            tree_pacientes.heading(col, text=col)
-            tree_pacientes.column(col, width=150, anchor=CENTER)
+        for col in self.columns_pacientes:
+            self.tree_pacientes.heading(col, text=col)
+            self.tree_pacientes.column(col, width=150, anchor=CENTER)
 
-        tree_pacientes.pack(fill="both", expand=True,padx=10, pady=10)
+        carregar_pacientes_db(self.tree_pacientes)
+        self.tree_pacientes.pack(fill="both", expand=True,padx=10, pady=10)
         tv_frame_pacientes.grid_columnconfigure(0, weight=1)
+        
+    def limpar_tv_pacientes(self, treeview):
+    # Remove todas as linhas existentes
+        for item in treeview.get_children():
+            treeview.delete(item)
+
+    def limpar_campos_pacientes(self):
+        self.inp_nome.delete(0, END)
+        self.inp_idade.delete(0, END)
+        self.inp_endereco.delete(0, END)
+        self.inp_contato.delete(0, END)
+
+    def adicionar_paciente(self):
+        n1 = self.inp_nome.get()
+        n2 = self.inp_idade.get()
+        n3 = self.inp_endereco.get()
+        n4 = self.inp_contato.get()
+
+        if n1 == "" or n2 == "" or n3 == "" or n4 == "":
+            messagebox.showerror("Erro", "Todos os campos devem ser preenchidos")
+            return
+        else:
+            self.limpar_tv_pacientes(self.tree_pacientes)
+            adicionar_paciente_db(n1, n2, n3, n4)
+            for col in self.columns_pacientes:
+                self.tree_pacientes.heading(col, text=col)
+                self.tree_pacientes.column(col, width=150, anchor=CENTER)
+            
+            self.tree_pacientes.pack(fill="both", expand=True,padx=10, pady=10)
+            
+            carregar_pacientes_db(self.tree_pacientes)
+            self.limpar_campos_pacientes()
+            
 JanelaPrincipal()
