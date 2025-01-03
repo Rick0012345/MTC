@@ -142,12 +142,13 @@ class JanelaPrincipal:
             btn_frame,
             text="Adicionar Paciente",
             command=self.adicionar_paciente,
-            )
+            ) # Há uma inconsistência aqui. btn_adicionar_paciente possui estrutura diferente dos outros botões 
+                # Ele se refere à variável novamente para acessar o atributo grid.
         btn_adicionar_paciente.grid(row=0, column=1, padx=20, pady=10, sticky="w")
         btn_remover_paciente = CTkButton(
             btn_frame,
             text="Remover Paciente",
-            command=None
+            command=self.remover_paciente
             ).grid(row=0, column=2, padx=20, pady=10, sticky="w")
         btn_editar_paciente = CTkButton(
             btn_frame,
@@ -239,5 +240,27 @@ class JanelaPrincipal:
             
             carregar_pacientes_db(self.tree_pacientes)
             self.limpar_campos_pacientes()
+            
+    def remover_paciente(self):
+        selecionado = self.tree_pacientes.selection()
+        if not selecionado:
+            messagebox.showerror("Erro", "Nenhum paciente selecionado")
+            return
+        else:
+        # Obter dados do paciente selecionado
+            paciente_selecionado = self.tree_pacientes.item(selecionado[0], "values")
+            # nome = paciente_selecionado[0]
+            # idade = paciente_selecionado[1]
+            # endereco = paciente_selecionado[2]
+            cpf = paciente_selecionado[3]  # Supondo que o CPF é o quarto campo (índice 3)
+            
+            # Remover paciente do banco de dados
+            deletar_paciente_db(cpf)
+
+            # Atualizar a Treeview
+            self.limpar_tv_pacientes(self.tree_pacientes)
+            carregar_pacientes_db(self.tree_pacientes)
+
+            messagebox.showinfo("Sucesso", "Paciente removido com sucesso!")
             
 JanelaPrincipal()
