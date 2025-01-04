@@ -29,14 +29,14 @@ def adicionar_medicamento_db(nome, estoque, vencimento):
     except sqlite3.Error as e:
         print(f"Erro ao adicionar medicamento: {e}")
 
-# Função para carregar pacientes no TreeView
 def carregar_pacientes_db(tree):
     try:
         with conectardb() as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT nome, idade, endereco, CPF FROM pacientes')
+            cursor.execute('SELECT pk, nome, idade, endereco, CPF FROM pacientes')
             for row in cursor.fetchall():
                 tree.insert("", tk.END, values=row)
+
     except sqlite3.Error as e:
         print(f"Erro ao carregar pacientes: {e}")
 
@@ -51,20 +51,20 @@ def carregar_medicamentos_db(tree):
     except sqlite3.Error as e:
         print(f"Erro ao carregar medicamentos: {e}")
 
-# Função para gerar a base de dados (criar tabelas)
 def gerardb():
     try:
         with sqlite3.connect('controle_medicamentos.db') as conn:
             cursor = conn.cursor()
             cursor.execute('''CREATE TABLE IF NOT EXISTS pacientes (
-                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                pk INTEGER PRIMARY KEY AUTOINCREMENT,
                                 nome TEXT NOT NULL,
                                 idade INTEGER NOT NULL,
                                 endereco TEXT NOT NULL,
                                 CPF INTEGER NOT NULL
                             )''')
+
             cursor.execute('''CREATE TABLE IF NOT EXISTS medicamentos (
-                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                pk INTEGER PRIMARY KEY AUTOINCREMENT,
                                 nome TEXT NOT NULL,
                                 estoque INTEGER NOT NULL,
                                 vencimento TEXT NOT NULL
@@ -90,13 +90,13 @@ def editar_paciente_db(nome, idade, endereco, CPF):
         print(f"Erro ao editar paciente: {e}")
 
 # Função para deletar um paciente no banco de dados
-def deletar_paciente_db(CPF):
+def deletar_paciente_db(pk):
     try:
         with conectardb() as conn:
             cursor = conn.cursor()
-            cursor.execute('DELETE FROM pacientes WHERE CPF = ?', (CPF,))
+            cursor.execute('DELETE FROM pacientes WHERE pk = ?', (pk,))
             conn.commit()
-            print(f"Paciente com CPF {CPF} removido com sucesso!")
+            print(f"Paciente com a primary key {pk} removido com sucesso!")
     except sqlite3.Error as e:
         print(f"Erro ao deletar paciente: {e}")
 

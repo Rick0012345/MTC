@@ -198,13 +198,14 @@ class JanelaPrincipal:
         self.inp_contato.grid(row=5, column=0, padx=10, pady=10, sticky="ew")
         
 
-        self.columns_pacientes = ("Nome", "Idade", "Contato Familiar", "CPF")
+        self.columns_pacientes = ("id", "Nome", "Idade", "Contato Familiar", "CPF")
         self.tree_pacientes = ttk.Treeview(tv_frame_pacientes, columns=self.columns_pacientes, show="headings", height=15)
         
         for col in self.columns_pacientes:
             self.tree_pacientes.heading(col, text=col)
             self.tree_pacientes.column(col, width=150, anchor=CENTER)
 
+        self.tree_pacientes.column("id", width=50, anchor=CENTER) 
         carregar_pacientes_db(self.tree_pacientes)
         self.tree_pacientes.pack(fill="both", expand=True,padx=10, pady=10)
         tv_frame_pacientes.grid_columnconfigure(0, weight=1)
@@ -247,15 +248,12 @@ class JanelaPrincipal:
             messagebox.showerror("Erro", "Nenhum paciente selecionado")
             return
         else:
-        # Obter dados do paciente selecionado
             paciente_selecionado = self.tree_pacientes.item(selecionado[0], "values")
-            # nome = paciente_selecionado[0]
-            # idade = paciente_selecionado[1]
-            # endereco = paciente_selecionado[2]
-            cpf = paciente_selecionado[3]  # Supondo que o CPF é o quarto campo (índice 3)
+
+            pk = paciente_selecionado[0]
             
             # Remover paciente do banco de dados
-            deletar_paciente_db(cpf)
+            deletar_paciente_db(pk=pk)
 
             # Atualizar a Treeview
             self.limpar_tv_pacientes(self.tree_pacientes)
