@@ -214,7 +214,7 @@ class JanelaPrincipal:
     # Remove todas as linhas existentes
         for item in treeview.get_children():
             treeview.delete(item)
-
+#
     def limpar_campos_pacientes(self):
         self.inp_nome.delete(0, END)
         self.inp_idade.delete(0, END)
