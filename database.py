@@ -56,8 +56,6 @@ def gerardb():
     try:
         with sqlite3.connect('controle_medicamentos.db') as conn:
             cursor = conn.cursor()
-            
-            # Criar tabela de pacientes
             cursor.execute('''CREATE TABLE IF NOT EXISTS pacientes (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 nome TEXT NOT NULL,
@@ -65,8 +63,6 @@ def gerardb():
                                 endereco TEXT NOT NULL,
                                 CPF INTEGER NOT NULL
                             )''')
-
-            # Criar tabela de medicamentos
             cursor.execute('''CREATE TABLE IF NOT EXISTS medicamentos (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 nome TEXT NOT NULL,
