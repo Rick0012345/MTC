@@ -2,15 +2,67 @@ import tkinter as tk
 import mysql.connector
 from mysql.connector import Error
 
-def conectardb():
+import mysql.connector
+from mysql.connector import Error
+
+def conectar_db():
     try:
-        return sqlite3.connect('controle_medicamentos.db')
-    except sqlite3.Error as e:
+        # Conexão inicial com o usuário root
+        conexao_inicial = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='3306'
+        )
+        print("Conexão inicial estabelecida com o usuário root.")
+        return conexao_inicial  # Retorna a conexão
+    except mysql.connector.Error as e:
         print(f"Erro ao conectar ao banco de dados: {e}")
-        return None
+        return None  # Retorna None se houver falha
+
+
+def gerar_db():
+    try:
+        # Conexão com o servidor MySQL
+        conn = conectar_db()
+        if conn and conn.is_connected():  # Verifica se a conexão foi estabelecida
+            cursor = conn.cursor()
+            cursor.execute("CREATE DATABASE IF NOT EXISTS MTC")
+            cursor.execute("USE MTC")  # Seleciona o banco
+
+            cursor.execute('''CREATE TABLE IF NOT EXISTS pacientes (
+                                pk INT AUTO_INCREMENT PRIMARY KEY,
+                                nome VARCHAR(255) NOT NULL,
+                                idade INT NOT NULL,
+                                sexo ENUM('M', 'F') NOT NULL,
+                                contato VARCHAR(15) NOT NULL,
+                                endereco TEXT NOT NULL,
+                                CPF BIGINT NOT NULL UNIQUE
+                            )''')
+
+            # Criação da tabela "medicamentos"
+            cursor.execute('''CREATE TABLE IF NOT EXISTS medicamentos (
+                                pk INT AUTO_INCREMENT PRIMARY KEY,
+                                nome VARCHAR(255) NOT NULL,
+                                estoque INT NOT NULL,
+                                vencimento DATE NOT NULL
+                            )''')
+
+            conn.commit()
+            print("Banco de dados e tabelas criados com sucesso.")
+        else:
+            print("Não foi possível estabelecer uma conexão com o banco de dados.")
+
+    except Error as e:
+        print(f"Erro ao gerar o banco de dados: {e}")
+
+    finally:
+        if conn and conn.is_connected():  # Verifica novamente antes de encerrar
+            cursor.close()
+            conn.close()
 
 # Função para adicionar um paciente
 def adicionar_paciente_db(nome, idade, endereco, CPF):
+    
     try:
         with conectardb() as conn:
             cursor = conn.cursor()
@@ -52,53 +104,6 @@ def carregar_medicamentos_db(tree):
         print(f"Erro ao carregar medicamentos: {e}")
 
 
-
-def gerardb():
-    try:
-        # Conexão com o servidor MySQL
-        conn = mysql.connector.connect(
-            host='localhost',  # Substitua pelo endereço do servidor MySQL
-            user='seu_usuario',  # Substitua pelo seu usuário do MySQL
-            password='sua_senha'  # Substitua pela sua senha do MySQL
-        )
-        
-        if conn.is_connected():
-            cursor = conn.cursor()
-
-            # Criação do banco de dados, se não existir
-            cursor.execute("CREATE DATABASE IF NOT EXISTS controle_medicamentos")
-            cursor.execute("USE controle_medicamentos")  # Seleciona o banco
-
-            # Criação da tabela "pacientes"
-            cursor.execute('''CREATE TABLE IF NOT EXISTS pacientes (
-                                pk INT AUTO_INCREMENT PRIMARY KEY,
-                                nome VARCHAR(255) NOT NULL,
-                                idade INT NOT NULL,
-                                sexo ENUM('M', 'F') NOT NULL,
-                                contato VARCHAR(15) NOT NULL,
-                                endereco TEXT NOT NULL,
-                                CPF BIGINT NOT NULL UNIQUE
-                            )''')
-
-            # Criação da tabela "medicamentos"
-            cursor.execute('''CREATE TABLE IF NOT EXISTS medicamentos (
-                                pk INT AUTO_INCREMENT PRIMARY KEY,
-                                nome VARCHAR(255) NOT NULL,
-                                estoque INT NOT NULL,
-                                vencimento DATE NOT NULL
-                            )''')
-
-            conn.commit()
-            print("Banco de dados e tabelas criados com sucesso.")
-    
-    except Error as e:
-        print(f"Erro ao gerar o banco de dados: {e}")
-
-    finally:
-        if conn.is_connected():
-            cursor.close()
-            conn.close()
-
 # Função para editar um paciente no banco de dados
 def editar_paciente_db(nome, idade, endereco, CPF):
     try:
@@ -136,4 +141,4 @@ def deletar_medicamento_db(nome):
         print(f"Erro ao deletar medicamento: {e}")
 
 # Gerar a base de dados ao inicializar
-gerardb()
+gerar_db()
