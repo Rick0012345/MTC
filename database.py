@@ -1,7 +1,7 @@
-import sqlite3
 import tkinter as tk
+import mysql.connector
+from mysql.connector import Error
 
-# Função para conectar ao banco de dados
 def conectardb():
     try:
         return sqlite3.connect('controle_medicamentos.db')
@@ -51,28 +51,53 @@ def carregar_medicamentos_db(tree):
     except sqlite3.Error as e:
         print(f"Erro ao carregar medicamentos: {e}")
 
+
+
 def gerardb():
     try:
-        with sqlite3.connect('controle_medicamentos.db') as conn:
+        # Conexão com o servidor MySQL
+        conn = mysql.connector.connect(
+            host='localhost',  # Substitua pelo endereço do servidor MySQL
+            user='seu_usuario',  # Substitua pelo seu usuário do MySQL
+            password='sua_senha'  # Substitua pela sua senha do MySQL
+        )
+        
+        if conn.is_connected():
             cursor = conn.cursor()
+
+            # Criação do banco de dados, se não existir
+            cursor.execute("CREATE DATABASE IF NOT EXISTS controle_medicamentos")
+            cursor.execute("USE controle_medicamentos")  # Seleciona o banco
+
+            # Criação da tabela "pacientes"
             cursor.execute('''CREATE TABLE IF NOT EXISTS pacientes (
-                                pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                                nome TEXT NOT NULL,
-                                idade INTEGER NOT NULL,
+                                pk INT AUTO_INCREMENT PRIMARY KEY,
+                                nome VARCHAR(255) NOT NULL,
+                                idade INT NOT NULL,
+                                sexo ENUM('M', 'F') NOT NULL,
+                                contato VARCHAR(15) NOT NULL,
                                 endereco TEXT NOT NULL,
-                                CPF INTEGER NOT NULL
+                                CPF BIGINT NOT NULL UNIQUE
                             )''')
 
+            # Criação da tabela "medicamentos"
             cursor.execute('''CREATE TABLE IF NOT EXISTS medicamentos (
-                                pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                                nome TEXT NOT NULL,
-                                estoque INTEGER NOT NULL,
-                                vencimento TEXT NOT NULL
+                                pk INT AUTO_INCREMENT PRIMARY KEY,
+                                nome VARCHAR(255) NOT NULL,
+                                estoque INT NOT NULL,
+                                vencimento DATE NOT NULL
                             )''')
+
             conn.commit()
-    except sqlite3.Error as e:
+            print("Banco de dados e tabelas criados com sucesso.")
+    
+    except Error as e:
         print(f"Erro ao gerar o banco de dados: {e}")
 
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
 
 # Função para editar um paciente no banco de dados
 def editar_paciente_db(nome, idade, endereco, CPF):
