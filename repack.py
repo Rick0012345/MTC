@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk, messagebox
 from customtkinter import *
-from database import carregar_pacientes_db, carregar_medicamentos_db, adicionar_paciente_db, editar_paciente_db, deletar_paciente_db
+# from database import carregar_pacientes_db, carregar_medicamentos_db, adicionar_paciente_db, editar_paciente_db, deletar_paciente_db
 from PIL import Image
 
 class JanelaPrincipal:
@@ -85,10 +85,23 @@ class JanelaPrincipal:
             tree.heading(col, text=col)
             tree.column(col, anchor=CENTER)
         
-        carregar_pacientes_db(tree=tree)
-        
+        # carregar_pacientes_db(tree=tree)
+
+        menu = Menu(self.root, tearoff=0)
+        menu_item_1 = Menu(menu, tearoff=0,)
+        menu_item_1.add_command(label="Acessar o banco", font=("Arial", 10), command=self.gerenciar_banco)
+        menu.add_cascade(label="Menu", menu=menu_item_1)
+        self.root.config(menu=menu)
+
         self.root.mainloop()
 
+    def gerenciar_banco(self):
+            banco_janela = CTkToplevel(self.root, width=200 ,height=200)
+            banco_janela.title("gerenciador de banco de dados")
+            banco_janela.geometry("1000x600")
+            banco_janela.transient(self.root)
+            banco_janela.deiconify()
+            banco_janela.mainloop()  
     def abrir_janela_pacientes(self):
             
         pacientes_janela = CTkToplevel(self.root)
@@ -206,7 +219,7 @@ class JanelaPrincipal:
             self.tree_pacientes.column(col, width=150, anchor=CENTER)
 
         self.tree_pacientes.column("id", width=50, anchor=CENTER) 
-        carregar_pacientes_db(self.tree_pacientes)
+        # carregar_pacientes_db(self.tree_pacientes)
         self.tree_pacientes.pack(fill="both", expand=True,padx=10, pady=10)
         tv_frame_pacientes.grid_columnconfigure(0, weight=1)
         
@@ -232,14 +245,14 @@ class JanelaPrincipal:
             return
         else:
             self.limpar_tv_pacientes(self.tree_pacientes)
-            adicionar_paciente_db(n1, n2, n3, n4)
+            # adicionar_paciente_db(n1, n2, n3, n4)
             for col in self.columns_pacientes:
                 self.tree_pacientes.heading(col, text=col)
                 self.tree_pacientes.column(col, width=150, anchor=CENTER)
             
             self.tree_pacientes.pack(fill="both", expand=True,padx=10, pady=10)
             
-            carregar_pacientes_db(self.tree_pacientes)
+            # carregar_pacientes_db(self.tree_pacientes)
             self.limpar_campos_pacientes()
             
     def remover_paciente(self):
@@ -253,11 +266,11 @@ class JanelaPrincipal:
             pk = paciente_selecionado[0]
             
             # Remover paciente do banco de dados
-            deletar_paciente_db(pk=pk)
+            # deletar_paciente_db(pk=pk)
 
             # Atualizar a Treeview
             self.limpar_tv_pacientes(self.tree_pacientes)
-            carregar_pacientes_db(self.tree_pacientes)
+            # carregar_pacientes_db(self.tree_pacientes)
 
             messagebox.showinfo("Sucesso", "Paciente removido com sucesso!")
             
