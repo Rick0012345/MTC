@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk, messagebox
 from customtkinter import *
-# from database import carregar_pacientes_db, carregar_medicamentos_db, adicionar_paciente_db, editar_paciente_db, deletar_paciente_db
+from database import *
 from PIL import Image
 
 class JanelaPrincipal:
@@ -84,7 +84,8 @@ class JanelaPrincipal:
         for col in columns:
             tree.heading(col, text=col)
             tree.column(col, anchor=CENTER)
-        
+
+        # Isso deveria ser removido e deveria-se carregar medicamentos e não pacientes.
         # carregar_pacientes_db(tree=tree)
 
         menu = Menu(self.root, tearoff=0)
@@ -158,16 +159,20 @@ class JanelaPrincipal:
             ) # Há uma inconsistência aqui. btn_adicionar_paciente possui estrutura diferente dos outros botões 
                 # Ele se refere à variável novamente para acessar o atributo grid.
         btn_adicionar_paciente.grid(row=0, column=1, padx=20, pady=10, sticky="w")
+        
         btn_remover_paciente = CTkButton(
             btn_frame,
             text="Remover Paciente",
             command=self.remover_paciente
-            ).grid(row=0, column=2, padx=20, pady=10, sticky="w")
+            )
+        btn_remover_paciente.grid(row=0, column=2, padx=20, pady=10, sticky="w")
+
         btn_editar_paciente = CTkButton(
             btn_frame,
             text="Editar Paciente",
             command=None
-            ).grid(row=0, column=3, padx=20, pady=10, sticky="w")
+            )
+        btn_editar_paciente.grid(row=0, column=3, padx=20, pady=10, sticky="w")
         
         self.inp_nome = CTkEntry(
             inp_frame,
@@ -209,9 +214,26 @@ class JanelaPrincipal:
             text_color="black"
             )
         self.inp_contato.grid(row=5, column=0, padx=10, pady=10, sticky="ew")
-        
 
-        self.columns_pacientes = ("id", "Nome", "Idade", "Contato Familiar", "CPF")
+        self.inp_CPF = CTkEntry(
+            inp_frame,
+            placeholder_text="CPF",
+            placeholder_text_color="#8c9190",
+            fg_color="white",
+            border_color="blue",
+            text_color="black"
+            )
+        self.inp_CPF.grid(row=6, column=0, padx=10, pady=10, sticky="ew")
+
+        self.inp_sexo = CTkOptionMenu(
+            inp_frame,
+            values=["F", "M"],
+            fg_color="white",
+            text_color="black"
+            )
+        self.inp_sexo.grid(row=7, column=0, padx=10, pady=10, sticky="ew")
+        
+        self.columns_pacientes = ("id", "Nome", "Idade", "Contato Familiar", "CPF", "Endereço", "Sexo")
         self.tree_pacientes = ttk.Treeview(tv_frame_pacientes, columns=self.columns_pacientes, show="headings", height=15)
         
         for col in self.columns_pacientes:
@@ -219,7 +241,7 @@ class JanelaPrincipal:
             self.tree_pacientes.column(col, width=150, anchor=CENTER)
 
         self.tree_pacientes.column("id", width=50, anchor=CENTER) 
-        # carregar_pacientes_db(self.tree_pacientes)
+        carregar_pacientes_db(self.tree_pacientes)
         self.tree_pacientes.pack(fill="both", expand=True,padx=10, pady=10)
         tv_frame_pacientes.grid_columnconfigure(0, weight=1)
         
@@ -233,26 +255,31 @@ class JanelaPrincipal:
         self.inp_idade.delete(0, END)
         self.inp_endereco.delete(0, END)
         self.inp_contato.delete(0, END)
+        self.inp_CPF.delete(0, END)
 
     def adicionar_paciente(self):
         n1 = self.inp_nome.get()
-        n2 = self.inp_idade.get()
-        n3 = self.inp_endereco.get()
+        n2 = int(self.inp_idade.get())
+        n3 = self.inp_sexo.get()
         n4 = self.inp_contato.get()
+        n5 = self.inp_endereco.get()
+        n6 = int(self.inp_CPF.get())
+        print(n1, n2, n3, n4, n5, n6)
+        print(type(n1), type(n2), type(n3), type(n4), type(n5), type(n6))
 
-        if n1 == "" or n2 == "" or n3 == "" or n4 == "":
+        if n1 == "" or n2 == "" or n3 == "" or n4 == "" or n5 == "" or n6 == "":
             messagebox.showerror("Erro", "Todos os campos devem ser preenchidos")
             return
         else:
             self.limpar_tv_pacientes(self.tree_pacientes)
-            # adicionar_paciente_db(n1, n2, n3, n4)
+            adicionar_paciente_db(n1, n2, n3, n4, n5, n6)
             for col in self.columns_pacientes:
                 self.tree_pacientes.heading(col, text=col)
                 self.tree_pacientes.column(col, width=150, anchor=CENTER)
             
             self.tree_pacientes.pack(fill="both", expand=True,padx=10, pady=10)
             
-            # carregar_pacientes_db(self.tree_pacientes)
+            carregar_pacientes_db(self.tree_pacientes)
             self.limpar_campos_pacientes()
             
     def remover_paciente(self):
@@ -266,11 +293,11 @@ class JanelaPrincipal:
             pk = paciente_selecionado[0]
             
             # Remover paciente do banco de dados
-            # deletar_paciente_db(pk=pk)
+            deletar_paciente_db(pk=pk)
 
             # Atualizar a Treeview
             self.limpar_tv_pacientes(self.tree_pacientes)
-            # carregar_pacientes_db(self.tree_pacientes)
+            carregar_pacientes_db(self.tree_pacientes)
 
             messagebox.showinfo("Sucesso", "Paciente removido com sucesso!")
             
