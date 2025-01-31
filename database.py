@@ -1,15 +1,18 @@
 import tkinter as tk
+import os
+from dotenv import load_dotenv
 import mysql.connector
 from mysql.connector import Error
 
 def conectar_db():
     try:
+        load_dotenv()
         # Conexão inicial com o usuário root
         conexao_inicial = mysql.connector.connect(
-            host='localhost',
-            user='root',
-            password='1234',
-            database = 'MTC'
+            host=os.getenv('HOSTNAME'),
+            user=os.getenv('USER'),
+            password=os.getenv('PASSWORD'),
+            database = os.getenv('DATABASE')
         )
         print("Conexão inicial estabelecida com o usuário root.")
         return conexao_inicial  # Retorna a conexão
